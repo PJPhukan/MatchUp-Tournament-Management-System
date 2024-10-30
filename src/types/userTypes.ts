@@ -14,6 +14,9 @@ export interface User extends Document {
         state: string,
         country: string
     }
+    verifyCode: string;
+    verifyCodeExp: Date;
+    isVerified: boolean;
     avatarUrl: string;
 
 }

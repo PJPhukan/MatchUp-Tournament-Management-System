@@ -52,6 +52,18 @@ const userSchema = new Schema<User>({
             required: [true, "Please provide a correct address"]
         }
     },
+    verifyCode: {
+        type: String,
+        required: [true, "Verify code is required"]
+    },
+    verifyCodeExp: {
+        type: Date,
+        required: [true, "Verify code expiry is required"]
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
     avatarUrl: {
         type: String,
         default: "/images/avatar.png" //TODO:Add default avater image 
