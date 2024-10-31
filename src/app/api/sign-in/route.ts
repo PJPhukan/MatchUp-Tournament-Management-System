@@ -1,0 +1,81 @@
+//steps for login user by the username or email and password
+//1) extract the email and password from the request json
+//2) check user is exist or not 
+//3) if not of user exist then return response message with a error message
+//4) if user exists then return response message with a success message
+
+import { ApiResponse } from "@/helpers/ApiResponse";
+import { dbConnect } from "@/lib/dbConnection";
+import { UserModel } from "@/model/user.model";
+import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs"
+import { comparePassword } from "@/helpers/authHelpers";
+
+export async function POST(request: Request): Promise<NextResponse> {
+    await dbConnect();
+    try {
+        // Extract user details from the request body
+        const { username, email, password } = await request.json();
+
+        // Check if user exists
+        const user = await UserModel.findOne({
+            $or: [{ email }, { username }]
+        })
+
+        let response: ApiResponse;
+
+        //if user not found then return a not found error
+        if (!user) {
+            response = {
+                success: false,
+                message: "User not found",
+                statusCode: 404
+            }
+            return NextResponse.json(response);
+        }
+        //check user is varified or not , if not varified then return error
+        if (!user.isVerified) {
+            response = {
+                success: false,
+                message: "User is not verified",
+                statusCode: 401,
+            }
+            return NextResponse.json(response)
+        }
+
+        //check password is correct or not
+        const checkPassword = await comparePassword({ password, hashedPassword: user.password });
+
+        //if password is incorrect then return error
+        if (!checkPassword) {
+            response = {
+                success: false,
+                message: "Incorrect password",
+                statusCode: 401,
+            }
+            return NextResponse.json(response);
+        }
+
+        //if user verified or credentials are valid then return user 
+        response = {
+            success: true,
+            message: "Succesfully signed in",
+            statusCode: 200,
+            data: user
+
+        }
+        return NextResponse.json(response);
+
+        
+    } catch (signInError) {
+        const response: ApiResponse = {
+            success: false,
+            message: "Failed to sign in",
+            statusCode: 401
+        }
+        return NextResponse.json(response);
+    }
+
+
+
+}
