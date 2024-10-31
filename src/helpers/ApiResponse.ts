@@ -2,5 +2,5 @@ export interface ApiResponse {
     success: boolean;
     message: string;
     statusCode: number;
-    data?: void;
+    data?: object;
 }
