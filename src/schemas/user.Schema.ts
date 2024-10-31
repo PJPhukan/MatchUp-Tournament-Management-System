@@ -58,3 +58,11 @@ export const SignInSchema = z.object({
         .regex(/[^a-zA-Z0-9]+/, { message: "Password should be contain atleast one speacial character" })
     ,
 })
+
+
+//verify code 
+export const verifySchema = z.object({
+    code: z.string()
+        .min(6, "Verification code must be 6 digits")
+        .max(6, "Verification code must be 6 digits")
+})
