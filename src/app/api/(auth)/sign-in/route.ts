@@ -9,7 +9,7 @@ import { dbConnect } from "@/lib/dbConnection";
 import { UserModel } from "@/model/user.model";
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs"
-import { comparePassword } from "@/helpers/authHelpers";
+import { comparePassword, encodeToken } from "@/helpers/authHelpers";
 
 export async function POST(request: Request): Promise<NextResponse> {
     await dbConnect();
@@ -18,7 +18,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         const { username, email, password } = await request.json();
 
         // Check if user exists
-        const user = await UserModel.findOne({
+        let user = await UserModel.findOne({
             $or: [{ email }, { username }]
         })
 
@@ -56,6 +56,27 @@ export async function POST(request: Request): Promise<NextResponse> {
             return NextResponse.json(response);
         }
 
+        //jwt token 
+        const payload = {
+            _id: user._id,
+            email: user.email,
+            username: user.username,
+            adharId: user.adharId
+        }
+
+        //generate token
+        const token = encodeToken(payload);
+
+        if (!token) {
+            response = {
+                success: false,
+                message: "Failed to generate token",
+                statusCode: 500
+            }
+
+            return NextResponse.json(response);
+        }
+
         //if user verified or credentials are valid then return user 
         response = {
             success: true,
@@ -64,9 +85,15 @@ export async function POST(request: Request): Promise<NextResponse> {
             data: user
 
         }
-        return NextResponse.json(response);
 
-        
+        // Create a response with the JSON data
+        const jsonResponse = NextResponse.json(response);
+
+        // Set the cookie on the response
+        jsonResponse.cookies.set("token", token, { httpOnly: true });
+
+        return jsonResponse;
+
     } catch (signInError) {
         const response: ApiResponse = {
             success: false,
