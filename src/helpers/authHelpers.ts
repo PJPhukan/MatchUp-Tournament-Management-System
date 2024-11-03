@@ -23,18 +23,19 @@ const encodeToken = (payload: object): string => {
 
 
 //decode jwt token
-const decodeToken = (request: NextRequest): (string | JwtPayload) => {
+const decodeToken = (request: NextRequest): string => {
     try {
         //get token from request
         const token = request.cookies.get("token")?.value || " ";
 
         //decode token
-        const decodeToken = jwt.verify(token, process.env.JWT_SECRET_KEY || '');
+        const decodeToken = jwt.verify(token, process.env.JWT_SECRET_KEY!) as JwtPayload;
 
         if (!decodeToken) {
             throw new Error('Invalid token');
         }
-        return decodeToken;
+        console.log("Print decoded token :", decodeToken); //TODO: Remove 
+        return decodeToken?._id;
     } catch (error) {
         throw new Error('Invalid token');
     }

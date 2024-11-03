@@ -2,7 +2,7 @@ import { Document, Types } from "mongoose"
 
 export interface Tournament extends Document {
     name: string;
-    thumbnail: string
+    poster: string
     startDate: Date;
     endDate: Date;
     location: {

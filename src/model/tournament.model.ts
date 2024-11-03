@@ -6,10 +6,9 @@ const TournamentSchema = new Schema<Tournament>({
     name: {
         type: String,
         required: [true, "Tournament name is required"],
-        trim: true,
         unique: true
     },
-    thumbnail: {
+    poster: {
         type: String,
         required: [true, "Please provide a valid poster"],
 
@@ -50,13 +49,15 @@ const TournamentSchema = new Schema<Tournament>({
     },
     apiKey: {
         type: String,
+        default: " "
     },
     apiKeyPassKey: {
         type: String,
+        password: " "
     },
-    userId:{
-        type:Schema.Types.ObjectId,
-        ref:"User"
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
     }
 
 
