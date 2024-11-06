@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import AppProvider from "@/context/AppProvider";
 import { Inter } from "next/font/google";
+import Navbar from "@/components/Navber";
+import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
-
 
 export const metadata: Metadata = {
   title: "MatchUp-Tournament management system",
@@ -17,9 +18,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <AppProvider>{children}</AppProvider>
-      </body>
+      <AppProvider>
+        <body className={inter.className}>
+          <Navbar />
+          {children}
+          <Toaster />
+        </body>
+      </AppProvider>
     </html>
   );
 }
