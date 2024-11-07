@@ -1,11 +1,11 @@
 
-import { Tournament } from '@/types/tournamentTypes';
+import { Event } from '@/types/EventTypes';
 import mongoose, { Schema } from 'mongoose'
 
-const TournamentSchema = new Schema<Tournament>({
+const EventSchema = new Schema<Event>({
     name: {
         type: String,
-        required: [true, "Tournament name is required"],
+        required: [true, "Event name is required"],
         unique: true
     },
     poster: {
@@ -66,6 +66,6 @@ const TournamentSchema = new Schema<Tournament>({
 
 })
 
-const TournamentModel = (mongoose.models.Tournament as mongoose.Model<Tournament>) || (mongoose.model<Tournament>("Tournament", TournamentSchema))
+const EventModel = (mongoose.models.Event as mongoose.Model<Event>) || (mongoose.model<Event>("Event", EventSchema))
 
-export { TournamentModel };
+export { EventModel };

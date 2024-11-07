@@ -1,9 +1,9 @@
 import { ApiResponse } from "@/helpers/ApiResponse";
 import { decodeToken } from "@/helpers/authHelpers";
 import { dbConnect } from "@/lib/dbConnection";
-import { TournamentModel } from "@/model/tournament.model";
+import { EventModel } from "@/model/event.model";
 import { UserModel } from "@/model/user.model";
-import { Tournament } from "@/types/tournamentTypes";
+import { Event } from "@/types/EventTypes";
 import { NextRequest, NextResponse } from "next/server";
 
 //delete a tournament
@@ -28,7 +28,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { tourn
 
 
         //check tournament exist or not by tournament id
-        let tournament = await TournamentModel.findById(tournamentId)
+        let tournament = await EventModel.findById(tournamentId)
 
         //if tournament not exist then return with a error message
         if (!tournament) {
@@ -61,7 +61,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { tourn
         }
 
         //delete tournament TODO:  Also delete all games under this tournament
-        const deleteTournament = await TournamentModel.findByIdAndDelete(tournamentId);
+        const deleteTournament = await EventModel.findByIdAndDelete(tournamentId);
 
         //check success or not
         if (!deleteTournament) {
@@ -117,7 +117,7 @@ export async function GET(request: NextRequest, { params }: { params: { tourname
 
 
         //check tournament exist or not by tournament id
-        let tournament = await TournamentModel.findById(tournamentId)
+        let tournament = await EventModel.findById(tournamentId)
 
         //if tournament not exist then return with a error message
         if (!tournament) {
@@ -198,7 +198,7 @@ export async function PUT(request: NextRequest, { params }: { params: { tourname
         }
 
         //check tournament exist or not by tournament id
-        let tournament = await TournamentModel.findById(tournamentId)
+        let tournament = await EventModel.findById(tournamentId)
 
         //if tournament not exist then return with a error message
         if (!tournament) {

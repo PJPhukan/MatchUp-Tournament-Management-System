@@ -2,7 +2,7 @@
 import { ApiResponse } from "@/helpers/ApiResponse";
 import { decodeToken } from "@/helpers/authHelpers";
 import { dbConnect } from "@/lib/dbConnection";
-import { TournamentModel } from "@/model/tournament.model";
+import { EventModel } from "@/model/event.model";
 import { UserModel } from "@/model/user.model";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const posterUrl = ""
 
         // create a new tournament
-        let tournament = await TournamentModel.create({
+        let tournament = await EventModel.create({
             name,
             poster: posterUrl,
             startDate,

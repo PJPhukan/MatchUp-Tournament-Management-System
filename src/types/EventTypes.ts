@@ -1,6 +1,6 @@
 import { Document, Types } from "mongoose"
 
-export interface Tournament extends Document {
+export interface Event extends Document {
     name: string;
     poster: string
     startDate: Date;
