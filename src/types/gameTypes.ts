@@ -2,23 +2,24 @@ import { Document, Types } from "mongoose"
 
 export interface Game extends Document {
     name: string;
-    thunbnail: string;
-    location: {
-        vill: string,
-        pincode: number,
-        state: string,
-        country: string
-    };
-    prize: [{ position?: string, amount: string | number }],//TODO: check carefully when you upload data 
-    Startdate: Date;
-    Enddate: Date;
-    time: string;
-    description: string;
-    minPalyer: number;
-    maxPlayer: number;
-    termsConditions: [string];
-    contactNumber: number;
-    contactEmail: string;
-    tournamentId: Types.ObjectId
+    maximumPlayers: number;
+    minimumPlayers: number;
+    StartDate: Date;
+    EndDate?: Date;
+    contactNumber: number; //contact number
+    contactEmail: string; //contact email
+    prize?: [{ position?: string, value?: string | number }],//TODO: check carefully when you upload data 
+    startingTime?: string;
+    endingTime?: string;
+    joiningFee?: number; // joining fee
+    lastDateApplication: Date;
+    place: string;
+    description?: string;
+    ageLimit: string;
+    facility?: [string];
+    rules?: [string]
+
+    eventId: Types.ObjectId
+    userId: Types.ObjectId
     //TODO: Foreign key
 }
