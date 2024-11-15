@@ -1,18 +1,23 @@
 import { dbConnect } from "@/lib/dbConnection";
-import { UserModel } from "@/model/user.model.js";
+import { UserModel } from "@/model/user.model";
 import bcrypt from "bcryptjs"
 import { NextResponse } from "next/server";
 import { ApiResponse } from "@/helpers/ApiResponse";
 import { varificationEmail } from "@/helpers/sendVarificationMail";
+import { ZodError } from "zod";
+import { ZodValidationError } from "@/exceptions/zod.exception";
 export async function POST(request: Request): Promise<NextResponse> {
     await dbConnect();
     try {
 
         //Extract user details from the request body
-        const { username, email, password, adharId, phoneNumber, address } = await request.json();
+        const { username, email, password, adharId, phoneNumber, fullname } = await request.json();
+
 
         //check if user already exists
         const existingUser = await UserModel.findOne({ $or: [{ email }, { username }] })
+
+        console.log("Check user : " + existingUser)
 
         //generate varification code 
         const verificationCode = Math.floor(Math.random() * 900000).toString();
@@ -45,8 +50,31 @@ export async function POST(request: Request): Promise<NextResponse> {
                 existingUser.isVerified = false;
 
                 await existingUser.save();
+
+                //send varification email notification
+                const emailResponse = await varificationEmail({ email: email, username: username, otp: verificationCode });
+
+                //if faild to send the email, return an error message
+
+                if (!emailResponse.success) {
+                    response = {
+                        success: false,
+                        message: "Failed to send verification email",
+                        statusCode: 400
+                    }
+                    return NextResponse.json(response);
+                }
+
+                response = {
+                    success: true,
+                    message: "User alredy sign in, please verify your account.",
+                    statusCode: 201
+                }
+
+                return NextResponse.json(response);
             }
-        } else {
+        }
+        else {
 
             //hashed the password
             const hashedPassword = await bcrypt.hash(password, 10);
@@ -59,7 +87,7 @@ export async function POST(request: Request): Promise<NextResponse> {
                 password: hashedPassword,
                 adharId,
                 phoneNumber,
-                address,
+                fullname,
                 verifyCode: verificationCode,
                 verifyCodeExp: expiryDate,
                 isVerified: false
@@ -99,10 +127,17 @@ export async function POST(request: Request): Promise<NextResponse> {
         }
         return NextResponse.json(response);
     } catch (signInError) {
-        const response: ApiResponse = {
+        // Extract error message from the caught error
+        const errorMessage = signInError instanceof Error ? signInError.message : "An unknown error occurred";
+        console.log("Sign in error: " + errorMessage);
+
+        let response: ApiResponse = {
             success: false,
-            message: "Failed to sign up",
+            message: errorMessage || "Failed to sign up",
             statusCode: 401
+        }
+        if (signInError instanceof ZodError) {
+            response.message = ZodValidationError
         }
         return NextResponse.json(response);
 
