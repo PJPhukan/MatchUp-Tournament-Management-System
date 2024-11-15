@@ -1,6 +1,8 @@
+import { ZodValidationError } from "@/exceptions/zod.exception";
+
 export interface ApiResponse {
     success: boolean;
-    message: string;
+    message: string | object;
     statusCode: number;
     data?: object;
 }
