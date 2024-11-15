@@ -3,17 +3,16 @@ import { decodeToken } from "@/helpers/authHelpers";
 import { dbConnect } from "@/lib/dbConnection";
 import { EventModel } from "@/model/event.model";
 import { UserModel } from "@/model/user.model";
-import { Event } from "@/types/EventTypes";
 import { NextRequest, NextResponse } from "next/server";
 
 //delete a tournament
-export async function DELETE(request: NextRequest, { params }: { params: { tournamentId: string } }): Promise<NextResponse> {
+export async function DELETE(request: NextRequest, { params }: { params: { eventId: string } }): Promise<NextResponse> {
 
     await dbConnect();
 
     try {
-        // Access tournamentId from params
-        const { tournamentId } = params;
+        // Access eventId from params
+        const { eventId } = params;
         //decode payload from the request
         const tokenId = decodeToken(request);
 
@@ -28,13 +27,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { tourn
 
 
         //check tournament exist or not by tournament id
-        let tournament = await EventModel.findById(tournamentId)
+        let event = await EventModel.findById(eventId)
 
         //if tournament not exist then return with a error message
-        if (!tournament) {
+        if (!event) {
             return NextResponse.json({
                 success: false,
-                message: "Tournament not found.",
+                message: "Event not found.",
                 statusCode: 404
             });
         }
@@ -60,14 +59,14 @@ export async function DELETE(request: NextRequest, { params }: { params: { tourn
             });
         }
 
-        //delete tournament TODO:  Also delete all games under this tournament
-        const deleteTournament = await EventModel.findByIdAndDelete(tournamentId);
+        //delete event TODO:  Also delete all games under this event
+        const deleteEvent = await EventModel.findByIdAndDelete(eventId);
 
         //check success or not
-        if (!deleteTournament) {
+        if (!deleteEvent) {
             return NextResponse.json({
                 success: false,
-                message: "Failed to delete tournament.",
+                message: "Failed to delete Event.",
                 statusCode: 401
             });
         }
@@ -75,17 +74,17 @@ export async function DELETE(request: NextRequest, { params }: { params: { tourn
         //send successfull message to the user
         let response = {
             success: true,
-            message: "Tournament deleted successfully",
+            message: "Event deleted successfully",
             statusCode: 201,
         }
         return NextResponse.json(response);
 
 
     } catch (error) {
-        console.error("Error while deleting tournament", error);
+        console.error("Error while deleting Event", error);
         const response: ApiResponse = {
             success: false,
-            message: "Failed to delete tournament",
+            message: "Failed to delete Event",
             statusCode: 401
         }
         return NextResponse.json(response);
@@ -95,13 +94,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { tourn
 
 
 //get tournament details
-export async function GET(request: NextRequest, { params }: { params: { tournamentId: string } }): Promise<NextResponse> {
+export async function GET(request: NextRequest, { params }: { params: { eventId: string } }): Promise<NextResponse> {
 
     await dbConnect();
 
     try {
-        // Access tournamentId from params
-        const { tournamentId } = params;
+        // Access eventId from params
+        const { eventId } = params;
 
         //decode payload from the request
         const tokenId = decodeToken(request);
@@ -117,7 +116,7 @@ export async function GET(request: NextRequest, { params }: { params: { tourname
 
 
         //check tournament exist or not by tournament id
-        let tournament = await EventModel.findById(tournamentId)
+        let tournament = await EventModel.findById(eventId)
 
         //if tournament not exist then return with a error message
         if (!tournament) {
@@ -174,12 +173,12 @@ export async function GET(request: NextRequest, { params }: { params: { tourname
 
 
 //update tournament details
-export async function PUT(request: NextRequest, { params }: { params: { tournamentId: string } }): Promise<NextResponse> {
+export async function PUT(request: NextRequest, { params }: { params: { eventId: string } }): Promise<NextResponse> {
     await dbConnect();
 
     try {
-        // Access tournamentId from params
-        const { tournamentId } = params;
+        // Access eventId from params
+        const { eventId } = params;
 
         // Extract JSON data from the request body
         const { name, startDate, endDate, location, description } = await request.json();
@@ -198,7 +197,7 @@ export async function PUT(request: NextRequest, { params }: { params: { tourname
         }
 
         //check tournament exist or not by tournament id
-        let tournament = await EventModel.findById(tournamentId)
+        let tournament = await EventModel.findById(eventId)
 
         //if tournament not exist then return with a error message
         if (!tournament) {
