@@ -19,42 +19,36 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { AuroraBackground } from "@/components/ui/aurora-background";
+import axios, { AxiosError } from "axios";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 const page = () => {
   const [isSubmittingForm, setisSubmittingForm] = useState(false);
-
+  const router = useRouter();
   //zod implementation
   const form = useForm<z.infer<typeof SignUpSchema>>({
     resolver: zodResolver(SignUpSchema),
-    // defaultValues: {
-    //   username: "",
-    //   fullname:"",
-    //   email: "",
-    //   confirmPassword:"",
-    //   password: "",
-    //   adharId: 0,
-    //   phoneNumber: 0,
-    // },
   });
   const onSubmit = async (data: z.infer<typeof SignUpSchema>) => {
-    // setisSubmittingForm(true);
-    // try {
-    //   const response = await axios.post<ApiResponse>("/api/sign-up", data);
-    //   toast({
-    //     title: "Success",
-    //     description: response.data.message,
-    //   });
-    //   router.replace(`/verify/${username}`);
-    //   setisSubmittingForm(false);
-    // } catch (error) {
-    //   const axiosError = error as AxiosError<ApiResponse>;
-    //   let axiosMessage = axiosError.response?.data.message;
-    //   toast({
-    //     title: "Error",
-    //     description: axiosMessage || "Error in signup",
-    //     variant: "destructive",
-    //   });
-    //   setisSubmittingForm(false);
-    // }
+    setisSubmittingForm(true);
+    try {
+      const response = await axios.post(`/api/sign-up`, data);
+      toast({
+        title: "Success",
+        description: response.data.message,
+      });
+      router.replace("/login");
+    } catch (err) {
+      //write catch block
+      console.log("Print sign up error", err);
+      toast({
+        title: "Error",
+        description: "Failed to sign in",
+        variant: "destructive",
+      });
+    } finally {
+      setisSubmittingForm(false);
+    }
   };
 
   return (
