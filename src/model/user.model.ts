@@ -37,19 +37,15 @@ const userSchema = new Schema<User>({
     address: {
         vill: {
             type: String,
-            required: [true, "Please provide a correct address"]
         },
         pincode: {
             type: String,
-            required: [true, "Please provide a correct address"]
         },
         state: {
             type: String,
-            required: [true, "Please provide a correct address"]
         },
         country: {
             type: String,
-            required: [true, "Please provide a correct address"]
         }
     },
     verifyCode: {
