@@ -54,7 +54,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         response = {
             success: true,
             message: "Please verify your reset password One time Password",
-            statusCode: 201
+            statusCode: 201,
+            data: {
+                username: user.username,
+            }
         }
         return NextResponse.json(response);
 

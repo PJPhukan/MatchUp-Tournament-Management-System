@@ -71,3 +71,33 @@ export const verifySchema = z.object({
         .min(6, "Verification code must be 6 digits")
         .max(6, "Verification code must be 6 digits")
 })
+
+//send email schema
+export const sendSchema = z.object({
+    email: z
+        .string()
+        .email({ message: "Invalid email address" })
+        .regex(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/, "Please Enter a valid email"),
+
+})
+
+export const resetPassword = z.object({
+    password: z.string()
+        .min(8, {
+            message: "Password must be at least 8 characters"
+        })
+        .regex(/[a-z]+/, { message: "Password should be contain atleast one lower case" })
+        .regex(/[A-Z]+/, { message: "Password should be contain atleast one upper case" })
+        .regex(/[0-9]+/, { message: "Password should be contain atleast one number" })
+        .regex(/[^a-zA-Z0-9]+/, { message: "Password should be contain atleast one speacial character" })
+    ,
+    confirmPassword: z.string()
+        .min(8, {
+            message: "Password must be at least 8 characters"
+        })
+        .regex(/[a-z]+/, { message: "Password should be contain atleast one lower case" })
+        .regex(/[A-Z]+/, { message: "Password should be contain atleast one upper case" })
+        .regex(/[0-9]+/, { message: "Password should be contain atleast one number" })
+        .regex(/[^a-zA-Z0-9]+/, { message: "Password should be contain atleast one speacial character" })
+    ,
+})

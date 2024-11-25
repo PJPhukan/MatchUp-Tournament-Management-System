@@ -24,27 +24,42 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
+import { useParams, useRouter } from "next/navigation";
 const page = () => {
   const [isSubmittingForm, setisSubmittingForm] = useState(false);
   const { toast } = useToast();
-
+  const router = useRouter();
+  const params = useParams<{ username: string }>();
   const form = useForm<z.infer<typeof verifySchema>>({
     resolver: zodResolver(verifySchema),
   });
 
   const onSubmit = async (data: z.infer<typeof verifySchema>) => {
-    console.log("Print data", data.code);
-    //TODO: complete api
     setisSubmittingForm(true);
-    setInterval(() => {
+    try {
+      const response = await axios.post(`/api/forgot-verify-otp`, {
+        username: params?.username,
+        code: data.code,
+      });
+      toast({
+        title: "Success",
+        description: response.data.message,
+      });
+    if (params && params.username) {
+        router.replace(`/forgot-password/reset-password/${params?.username}`);
+      }
+    } catch (err) {
+      //write catch block
+      console.log("Print verify otp error error", err);
+      toast({
+        title: "Error",
+        description: "Failed to verify otp",
+        variant: "destructive",
+      });
+    } finally {
       setisSubmittingForm(false);
-    }, 4000);
-
-    //toast when form is submitted
-    toast({
-      title: "Success",
-      description: "successfully code verified",
-    });
+    }
   };
   return (
     <div className="-z-40">
@@ -63,7 +78,7 @@ const page = () => {
             <div className="w-full max-w-lg p-4 space-y-8 bg-white-rounded-lg shadow-md min-w-[100vw] sm:min-w-full">
               <div className="text-center">
                 <h1 className="text-extrabold text-4xl tracking-tight lg:text-3xl mb-2 font-bold">
-                  Verify your OTP
+                  Forgot Password
                 </h1>
                 <p className="mb-4 font-thin">
                   {" "}
