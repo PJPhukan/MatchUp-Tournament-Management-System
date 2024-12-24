@@ -1,13 +1,15 @@
 "use client";
 
 import context from "./context";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const name = "true";
-  let isLoggedIn = true;
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
-    <context.Provider value={{ name, isLoggedIn }}>{children}</context.Provider>
+    <context.Provider value={{ name, isLoggedIn, setIsLoggedIn }}>
+      {children}
+    </context.Provider>
   );
 };
 

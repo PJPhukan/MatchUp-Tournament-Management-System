@@ -1,17 +1,22 @@
 "use client";
 // import "../app/global.css";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Link from "next/link";
 import logo from "@/assets/logo.png";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import context from "@/context/context";
 export default function Navbar() {
+  const contextValue = useContext(context);
+  const { isLoggedIn } = contextValue;
+
   const [isOpen, setIsOpen] = useState(false);
-  let isLoggedIn = false;
+  
   const pathname = usePathname();
-  if (pathname && pathname.includes("/dashboard")) {
-    isLoggedIn = false;
-  }
+ 
+useEffect(() => {
+  
+})
 
   return (
     !isLoggedIn && (
@@ -20,7 +25,9 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16">
             <div className="flex-shrink-0 flex items-center gap-2">
               <Image src={logo} alt="" className="rounded-full w-10 " />
-              <h1 className="text-white md:text-xl text-base font-extrabold">MatchUp</h1>
+              <h1 className="text-white md:text-xl text-base font-extrabold">
+                MatchUp
+              </h1>
             </div>
             <div className="flex items-center">
               <div className="hidden md:block">

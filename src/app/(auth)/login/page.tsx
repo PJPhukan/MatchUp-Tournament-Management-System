@@ -18,26 +18,56 @@ import { SignInSchema } from "@/schemas/user.Schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import axios from "axios";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import context from "@/context/context";
 function Login() {
   const [isSubmittingForm, setisSubmittingForm] = useState(false);
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof SignInSchema>>({
     resolver: zodResolver(SignInSchema),
   });
 
+  const { setIsLoggedIn } = useContext(context);
+  const handleLogin = () => {
+    setIsLoggedIn(true); // Now TypeScript won't complain
+    console.log("set login true");
+  };
+
   const onSubmit = async (data: z.infer<typeof SignInSchema>) => {
-    console.log("Onsubmit Clicked");
+    setisSubmittingForm(true);
+    try {
+      const response = await axios.post(`/api/sign-in`, data);
+      toast({
+        title: "Success",
+        description: response.data.message,
+      });
+      handleLogin();
+      router.replace("/dashboard"); //move to dashboard page
+      console.log("Move to dashboard page")
+    } catch (err) {
+      //write catch block
+      console.log("Print log in error", err); //TODO: remove this line
+
+      toast({
+        title: "Error",
+        description: "Failed to log in",
+        variant: "destructive",
+      });
+    } finally {
+      setisSubmittingForm(false);
+    }
   };
 
   return (
     <div className="-z-40">
-      <AuroraBackground>
+      {/* <AuroraBackground> */}
         <motion.div
           initial={{ opacity: 0.0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -53,7 +83,7 @@ function Login() {
               {/* <h1 className="text-center font-semibold py-6 text-2xl">
                 Welcome back!
               </h1> */}
-              <Tabs defaultValue="player" className="max-w-[500px]">
+              <Tabs defaultValue="organizer" className="max-w-[500px]">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="player">Player</TabsTrigger>
                   <TabsTrigger value="organizer">Organizer</TabsTrigger>
@@ -107,7 +137,10 @@ function Login() {
                             render={({ field }) => (
                               <FormItem>
                                 <Label>Username</Label>
-                                <Input {...field} placeholder="Enter your username"/>
+                                <Input
+                                  {...field}
+                                  placeholder="Enter your username"
+                                />
                                 <FormMessage />
                               </FormItem>
                             )}
@@ -119,7 +152,11 @@ function Login() {
                             render={({ field }) => (
                               <FormItem>
                                 <Label>Password</Label>
-                                <Input {...field} type="password" placeholder="Enter your password"/>
+                                <Input
+                                  {...field}
+                                  type="password"
+                                  placeholder="Enter your password"
+                                />
                                 <FormMessage />
                               </FormItem>
                             )}
@@ -128,7 +165,7 @@ function Login() {
                           {/* TODO: Forgot Password Link  */}
                           <div className=" flex justify-between my-3 md:flex-row flex-col gap-2">
                             <div className="flex items-center gap-1 ">
-                              <Checkbox id="terms" checked/>
+                              <Checkbox id="terms" checked />
                               <label
                                 htmlFor="terms"
                                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -138,7 +175,7 @@ function Login() {
                             </div>
 
                             <Link
-                              href="/forgot-password"
+                              href="/forgot-password/send"
                               className="text-blue-500 hover:text-blue-600 font-light text-sm"
                             >
                               Forgot Password &rarr;
@@ -180,7 +217,7 @@ function Login() {
             </div>
           </div>
         </motion.div>
-      </AuroraBackground>
+      {/* </AuroraBackground> */}
     </div>
   );
 }

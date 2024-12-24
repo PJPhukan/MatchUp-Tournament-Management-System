@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { resetPassword } from "@/schemas/user.Schema";
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -35,13 +35,14 @@ const page = () => {
     try {
       const response = await axios.post(`/api/reset-password`, {
         username: params?.username,
-        password:data.password
+        password: data.password,
       });
       toast({
         title: "Success",
-        description: response.data.message
+        description: response.data.message,
       });
       // router.replace(`/verify-user/${data.username}`);
+      router.replace("/login");
     } catch (err) {
       //write catch block
       console.log("Print reset password error", err); //TODO: remove this line
@@ -82,8 +83,6 @@ const page = () => {
                   onSubmit={form.handleSubmit(onSubmit)}
                   className="space-y-2"
                 >
-                 
-
                   <div className="flex flex-col w-full gap-2">
                     {/* TODO: password */}
                     <FormField
@@ -123,7 +122,6 @@ const page = () => {
                       )}
                     />
                   </div>
-              
 
                   <Button
                     type="submit"

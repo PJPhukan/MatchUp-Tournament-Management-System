@@ -1,5 +1,4 @@
 "use client";
-
 import {
   Calendar,
   ChevronDown,
@@ -45,10 +44,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "./collapsible";
-
+import { useRouter } from "next/navigation";
+// import { cookies } from 'next/headers'
 // Menu items.
 const items = [
   {
+    _id: 1231243434234,
     title: "Pyro Kinesis",
     url: "#",
     icon: Home,
@@ -65,7 +66,16 @@ const tournament = [
     name: "Hockey",
   },
 ];
-export function AppSidebar() {
+
+export async function AppSidebar() {
+  const router = useRouter();
+
+  const logOut = async () => {
+    // const cookieStore = await cookies()
+    // const token = cookieStore.delete('token')
+
+    router.replace(`/`);
+  };
   return (
     <Sidebar>
       {/* HEADER SECTION  */}
@@ -79,8 +89,11 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent>
+        {/* user create event  */}
         <SidebarGroup>
-          <SidebarGroupLabel>Events</SidebarGroupLabel>
+          <SidebarGroupLabel>
+            <Link href="/dashboard/events">Events</Link>
+          </SidebarGroupLabel>
           <SidebarGroupAction title="Add Project">
             <Plus /> <span className="sr-only">Add Event</span>
           </SidebarGroupAction>
@@ -91,82 +104,61 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton asChild>
-                        <Link href={item.url}>
+                        <Link href={`/dashboard/event/${item._id}`}>
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
-
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        <Collapsible className="group/collapsible">
-                          <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
-                              <SidebarMenuButton asChild>
-                                <div className="flex justify-between items-center hover:bg-gray-100">
-                                  <span>Sports</span>
-                                  <span>
-                                    <Plus className="w-5" />
-                                  </span>
-                                </div>
-                              </SidebarMenuButton>
-                            </CollapsibleTrigger>
-
-                            <CollapsibleContent>
-                              {tournament.map((item) => {
-                                return (
-                                  <SidebarMenuSub>
-                                    <span>{item.name}</span>
-                                    <SidebarMenuSubItem />
-                                  </SidebarMenuSub>
-                                );
-                              })}
-                            </CollapsibleContent>
-                          </SidebarMenuItem>
-                        </Collapsible>
-                        <SidebarMenuSubItem />
-                      </SidebarMenuSub>
-                      <SidebarMenuSub>
-                        <Collapsible className="group/collapsible">
-                          <SidebarMenuItem>
-                            <CollapsibleTrigger asChild>
-                              <SidebarMenuButton asChild>
-                                <div className="flex justify-between items-center hover:bg-gray-100">
-                                  <span>E-Sports</span>
-                                  <span className="z-[100]">
-                                    <Plus className="w-5" />
-                                  </span>
-                                </div>
-                              </SidebarMenuButton>
-                            </CollapsibleTrigger>
-
-                            <CollapsibleContent>
-                              {tournament.map((item) => {
-                                return (
-                                  <SidebarMenuSub>
-                                    <span className="hover:bg-gray-100">
-                                      {item.name}
-                                    </span>
-                                    <SidebarMenuSubItem />
-                                  </SidebarMenuSub>
-                                );
-                              })}
-                            </CollapsibleContent>
-                          </SidebarMenuItem>
-                        </Collapsible>
-                        <SidebarMenuSubItem />
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
                   </SidebarMenuItem>
                 </Collapsible>
               ))}
             </SidebarMenu>
             <SidebarMenu className="mt-4 bg-gray-100 rounded-md">
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild className="bg-blue-500 rounded-full hover:bg-blue-400 text-white ">
                   <Link href="/dashboard/c-tournament">
                     <Plus className="w-5" />
                     <span>Add Event</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* user joined event  */}
+        <SidebarGroup>
+          <SidebarGroupLabel>
+            <Link href="/dashboard/events">Joined Events</Link>
+          </SidebarGroupLabel>
+          <SidebarGroupAction title="Add Project">
+            <Plus /> <span className="sr-only">Join event</span>
+          </SidebarGroupAction>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {items.map((item) => (
+                <Collapsible className="group/collapsible">
+                  <SidebarMenuItem key={item.title}>
+                    <CollapsibleTrigger asChild>
+                      <SidebarMenuButton asChild>
+                        <Link href={`/dashboard/event/${item._id}`}>
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </CollapsibleTrigger>
+                  </SidebarMenuItem>
+                </Collapsible>
+              ))}
+            </SidebarMenu>
+            <SidebarMenu className="mt-4 bg-gray-100 rounded-md">
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="bg-blue-500 rounded-full hover:bg-blue-400 text-white "
+                >
+                  <Link href="/dashboard/c-tournament">
+                    <Plus className="w-5" />
+                    <span>Join Event</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
@@ -207,7 +199,7 @@ export function AppSidebar() {
                   <span>Billing</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <span>Log Out</span>
+                  <span onClick={logOut}>Log Out</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
