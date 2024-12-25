@@ -31,14 +31,14 @@ const EventSchema = new Schema<Event>({
             required: [true, "Please provide a correct address"]
         },
         pincode: {
-            type: String,
+            type: Number,
             required: [true, "Please provide a correct address"]
         },
         state: {
             type: String,
             required: [true, "Please provide a correct address"]
         },
-        country: {
+        district: {
             type: String,
             required: [true, "Please provide a correct address"]
         }

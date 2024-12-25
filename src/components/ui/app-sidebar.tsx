@@ -80,7 +80,7 @@ export async function AppSidebar() {
     <Sidebar>
       {/* HEADER SECTION  */}
       <SidebarHeader>
-        <Link href="/dashboard/event">
+        <Link href="/dashboard">
           <div className="flex-shrink-0 flex items-center gap-2 bg-gray-200 py-1 px-2 rounded">
             <Image src={logo} alt="" className="rounded-full w-10 " />
             <h1 className="text-black text-xl font-extrabold">MatchUp</h1>
@@ -118,7 +118,7 @@ export async function AppSidebar() {
                 <SidebarMenuButton asChild className="bg-blue-500 rounded-full hover:bg-blue-400 text-white ">
                   <Link href="/dashboard/c-tournament">
                     <Plus className="w-5" />
-                    <span>Add Event</span>
+                    <span>Create Event</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>

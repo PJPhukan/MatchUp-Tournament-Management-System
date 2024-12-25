@@ -9,9 +9,9 @@ export default function middleware(request: NextRequest) {
     if (!token && url.pathname.includes("/dashboard")) {
         return NextResponse.redirect(new URL(`/login`, request.url));
     }
-    if (token && url.pathname === "/") {
-        return NextResponse.redirect(new URL(`/dashboard`, request.url));
-    }
+    // if (token && url.pathname === "/") {
+    //     return NextResponse.redirect(new URL(`/dashboard`, request.url));
+    // }
 
     // If the token exists and the user is trying to access the login page, redirect to the dashboard
     if (token && url.pathname.includes("/sign-in")) {

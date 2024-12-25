@@ -1,6 +1,7 @@
 
 import { ApiResponse } from "@/helpers/ApiResponse";
 import { decodeToken } from "@/helpers/authHelpers";
+import { cloudinaryUpload } from "@/helpers/Cloudinary";
 import { dbConnect } from "@/lib/dbConnection";
 import { EventModel } from "@/model/event.model";
 import { UserModel } from "@/model/user.model";
@@ -8,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 
 
-//create a new tournament
+//create a new event
 export async function POST(request: NextRequest): Promise<NextResponse> {
 
     await dbConnect();
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
 
         // Extract JSON data from the request body
-        const { name, poster, startDate, endDate, location, description } = await request.json();
+        const { name, poster, startDate, endDate, vill, state, district, pincode, description } = await request.json();
 
 
         //decode payload from the request
@@ -52,24 +53,49 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             });
         }
         //TODO: Upload image 3rd party resources 
-        const posterUrl = ""
+        console.log(poster)
+        // Upload poster to Cloudinary
+        let posterUrl: string;
+        const cloudinaryResponse = await cloudinaryUpload(poster);
+        if (cloudinaryResponse && cloudinaryResponse.url) {
+            console.log(cloudinaryResponse.url)
+            posterUrl = "cloudinaryResponse.url"
+        } else {
+            return NextResponse.json({
+                success: false,
+                message: "Failed to upload poster to Cloudinary",
+                statusCode: 500
+            });
 
-        // create a new tournament
-        let tournament = await EventModel.create({
+        }
+
+        let location: {
+            vill: string;
+            pincode: number;
+            state: string;
+            district: string;
+        } = {
+            vill,
+            pincode,
+            state,
+            district
+        };
+        // create a new event
+        let event = await EventModel.create({
             name,
             poster: posterUrl,
             startDate,
             endDate,
-            location,
+            location: location,
             description,
             userId: user._id
         });
 
-        //check tournament is successfully created or not
-        if (!tournament) {
+        //check event is successfully created or not
+        if (!event) {
             return NextResponse.json({
                 success: false,
-                message: "Failed to create a new tournament",
+                message: "Failed to create a new event",
                 statusCode: 401
             });
         }
@@ -77,18 +103,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         //send successfull message to the user
         let response = {
             success: true,
-            message: "Tournament created successfully",
+            message: "event created successfully",
             statusCode: 201,
-            data: tournament
+            data: event
         }
         return NextResponse.json(response);
 
 
     } catch (error) {
-        console.error("Error while creating a new tournament", error);
+        console.error("Error while creating a new event", error);
         const response: ApiResponse = {
             success: false,
-            message: "Failed to create a new tournament",
+            message: "Failed to create a new event",
             statusCode: 401
         }
         return NextResponse.json(response);
@@ -97,7 +123,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 }
 
 
-//get all tournament which is created by the user
+//get all event which is created by the user
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
 
@@ -137,7 +163,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         }
 
 
-        //retrive all user created tournament
+        //retrive all user created event
 
 
 
@@ -157,7 +183,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         //send successfull message to the user
         let response = {
             success: true,
-            message: "Tournament created successfully",
+            message: "event created successfully",
             statusCode: 201
         }
         return NextResponse.json(response);

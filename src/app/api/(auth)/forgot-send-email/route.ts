@@ -26,8 +26,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         }
 
         //generate varification code 
-        const verificationCode = Math.floor(Math.random() * 900000).toString();
+        let verificationCode = Math.floor(Math.random() * 900000).toString();
 
+        while (verificationCode.length !== 6) {
+            verificationCode = Math.floor(Math.random() * 900000).toString();
+        }
         //set expiry date for the varification code(1 hours)
         let expiryDate = new Date();
         expiryDate.setMinutes(expiryDate.getMinutes() + 1);

@@ -15,11 +15,11 @@ export async function POST(request: Request): Promise<NextResponse> {
     await dbConnect();
     try {
         // Extract user details from the request body
-        const { username, email, password } = await request.json();
+        const { username, password } = await request.json();
 
         // Check if user exists
         let user = await UserModel.findOne({
-            $or: [{ email }, { username }]
+            $or: [{ username }]
         })
 
         let response: ApiResponse;
@@ -76,6 +76,8 @@ export async function POST(request: Request): Promise<NextResponse> {
 
             return NextResponse.json(response);
         }
+        //remove password from the user
+        // user = await UserModel.findById(user._id).select("-password");
 
         //if user verified or credentials are valid then return user 
         response = {
